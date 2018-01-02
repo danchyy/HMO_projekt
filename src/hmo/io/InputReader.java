@@ -1,6 +1,6 @@
 package hmo.io;
 
-import hmo.gen_alg.Test;
+import hmo.gen_alg.Task;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,19 +21,23 @@ public class InputReader {
         int numberOfTests = -1;
         int numberOfMachines = -1;
         int numberOfResources = -1;
-        List<Test> tests = new ArrayList<>();
-        List<String> allMachines = new ArrayList<>();
-        List<String> allResources = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
+        List<Integer> allMachines = new ArrayList<>();
+        List<Integer> allResources = new ArrayList<>();
         for (String line: lines) {
             if (line.startsWith("embedded_board")) {
-                allMachines.add(line.split("\\(")[1].split("\\)")[0].trim());
+                String machineString = line.split("\\(")[1].split("\\)")[0].trim();
+                int machine = Integer.parseInt(machineString.substring(2, machineString.length()-1));
+                allMachines.add(machine);
             } else if (line.startsWith("resource")) {
-                allResources.add(line.split("\\(")[1].split(",")[0].trim()); // ignoring the availability
+                String resourceString = line.split("\\(")[1].split(",")[0].trim();
+                int resource = Integer.parseInt(resourceString.substring(2, resourceString.length()-1));
+                allResources.add(resource);
             }
         }
         for (String line : lines) {
             if (line.startsWith("%")) {
-                if (line.contains("tests")) {
+                if (line.contains("tasks")) {
                     numberOfTests = Integer.parseInt(line.split(":")[1].trim());
                 }
                 if (line.contains("machines")) {
@@ -43,29 +47,42 @@ public class InputReader {
                     numberOfResources = Integer.parseInt(line.split(":")[1].trim());
                 }
             }
-            else if (line.startsWith("test")) {
+            else if (line.startsWith("task")) {
                 line = line.substring(5).trim(); // to remove test(
                 line = line.split("\\)")[0]; // to remove ).
                 String[] splittedLine = line.split(",", 3);
                 String testName = splittedLine[0].trim();
-                int testLength = Integer.parseInt(splittedLine[1].trim());
+                int taskIndex = Integer.parseInt(testName.substring(2, testName.length()-1));
+                int taskLength = Integer.parseInt(splittedLine[1].trim());
                 String restOfLine = splittedLine[2].trim();
                 String machineString = restOfLine.substring(restOfLine.indexOf('[')+1, restOfLine.indexOf(']')).trim();
-                String[] availableMachines = machineString.split(",");
-                if (availableMachines.length == 0) {
-                    availableMachines = allMachines.toArray(new String[0]);
+                String[] availableMachinesString = machineString.split(",");
+                Integer[] availableMachines = new Integer[availableMachinesString.length];
+                if (availableMachinesString[0].isEmpty()) {
+                    availableMachines = allMachines.toArray(new Integer[0]);
+                } else {
+                    for (int i=0; i < availableMachinesString.length; i++) {
+                        availableMachines[i] = Integer.parseInt(availableMachinesString[i].substring(2, availableMachinesString[i].length()-1));
+                    }
                 }
+
+
                 String resourceString = restOfLine.split("\\[")[2];
                 resourceString = resourceString.substring(0, resourceString.length()-1);
-                String[] availableResources = resourceString.split(",");
-                if (availableResources.length == 0) {
-                    availableResources = allResources.toArray(new String[0]);
+                String[] availableResourcesString = resourceString.split(",");
+                Integer[] availableResources = new Integer[availableResourcesString.length];
+                if (availableResourcesString[0].isEmpty()) {
+                    availableResources = allResources.toArray(new Integer[0]);
+                } else {
+                    for (int i=0; i < availableResourcesString.length; i++) {
+                        availableResources[i] = Integer.parseInt(availableResourcesString[i].substring(2, availableResourcesString[i].length()-1));
+                    }
                 }
-                tests.add(new Test(testName, testLength, availableMachines, availableResources));
+                tasks.add(new Task(taskIndex, taskLength, availableMachines, availableResources));
             }
-        }
-        for (Test test: tests) {
-            System.out.println(test);
+            for (Task task: tasks) {
+                System.out.println(task);
+            }
         }
     }
 
