@@ -1,6 +1,7 @@
 package hmo.io;
 
 import hmo.gen_alg.Task;
+import hmo.gen_alg.Unit;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +17,7 @@ public class InputReader {
         this.filePath = filePath;
     }
 
-    public void parseInputFile() throws IOException {
+    public List<Task> parseInputFile() throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         int numberOfTests = -1;
         int numberOfMachines = -1;
@@ -80,10 +81,8 @@ public class InputReader {
                 }
                 tasks.add(new Task(taskIndex, taskLength, availableMachines, availableResources));
             }
-            for (Task task: tasks) {
-                System.out.println(task);
-            }
         }
+        return tasks;
     }
 
     public static void main(String[] args) throws IOException {

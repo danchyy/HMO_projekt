@@ -4,8 +4,6 @@ import java.util.Random;
 
 public class Task {
 
-    private byte[] array;
-
     private Integer name;
 
     private int length;
@@ -14,10 +12,6 @@ public class Task {
 
     private Integer[] availableResources;
 
-    private Integer currentMachine;
-
-    private Integer currentResource;
-
     private Random randomGenerator;
 
     public Task(Integer name, int length, Integer[] availableMachines, Integer[] availableResources) {
@@ -25,21 +19,24 @@ public class Task {
         this.length = length;
         this.availableMachines = availableMachines;
         this.availableResources = availableResources;
-        this.currentMachine = availableMachines[0];
-        this.currentResource = availableResources[0];
         this.randomGenerator = new Random();
     }
 
-    public void selectRandomMachine() {
-        int machineIndex = randomGenerator.nextInt(this.availableMachines.length);
-        this.currentMachine = availableMachines[machineIndex];
+    public int getRandomMachine() {
+        return availableMachines[randomGenerator.nextInt(this.availableMachines.length)];
     }
 
-    public void selectRandomResource() {
-        int resourceIndex = randomGenerator.nextInt(this.availableResources.length);
-        this.currentResource = availableResources[resourceIndex];
+    public int getRandomResource() {
+        return availableResources[randomGenerator.nextInt(this.availableResources.length)];
     }
 
+    public int getNumberOfMachines() {
+        return availableMachines.length;
+    }
+
+    public int getNumberOfResources() {
+        return availableResources.length;
+    }
 
 
     @Override
