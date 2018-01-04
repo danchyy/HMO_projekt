@@ -1,0 +1,37 @@
+%% **** testsuite ****
+% Number of tasks : 20
+% Number of machines : 10
+% Number of resources : 3
+task( 't1', 424, [], []).
+task( 't2', 15, [], []).
+task( 't3', 266, [], []).
+task( 't4', 778, [], []).
+task( 't5', 435, [], []).
+task( 't6', 427, [], ['r2','r3','r1']).
+task( 't7', 173, [], []).
+task( 't8', 422, [], ['r2','r3']).
+task( 't9', 255, [], []).
+task( 't10', 672, [], []).
+task( 't11', 328, [], []).
+task( 't12', 263, [], []).
+task( 't13', 655, ['m7','m4'], []).
+task( 't14', 742, [], []).
+task( 't15', 364, ['m8','m3'], []).
+task( 't16', 272, ['m4'], []).
+task( 't17', 472, [], ['r3']).
+task( 't18', 555, [], ['r3','r2','r1']).
+task( 't19', 19, [], []).
+task( 't20', 364, [], []).
+embedded_board( 'm1').
+embedded_board( 'm2').
+embedded_board( 'm3').
+embedded_board( 'm4').
+embedded_board( 'm5').
+embedded_board( 'm6').
+embedded_board( 'm7').
+embedded_board( 'm8').
+embedded_board( 'm9').
+embedded_board( 'm10').
+resource( 'r1', 1).
+resource( 'r2', 1).
+resource( 'r3', 1).
