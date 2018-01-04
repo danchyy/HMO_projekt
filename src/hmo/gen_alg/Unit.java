@@ -1,5 +1,8 @@
 package hmo.gen_alg;
 
+import hmo.gen_alg.fitnessCalculators.BasicFitnessEvaluator;
+import hmo.gen_alg.fitnessCalculators.FitnessCalculator;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -28,6 +31,8 @@ public class Unit implements Comparable{
      */
     private List<Task> tasks;
 
+    private FitnessCalculator fitnessCalculator;
+
     private void shufflePermutationArray() {
         Random random = new Random();
         for (int i=permutationArray.length - 1; i > 0; i--) {
@@ -49,6 +54,7 @@ public class Unit implements Comparable{
         for (int i=0; i < array.length; i++) {
             array[i] = tasks.get(i).getRandomMachine();
         }
+        fitnessCalculator = new BasicFitnessEvaluator();
         fitnessInit = false;
     }
 
@@ -56,18 +62,21 @@ public class Unit implements Comparable{
         this.array = array;
         this.permutationArray = permutationArray;
         this.tasks = tasks;
+        fitnessCalculator = new BasicFitnessEvaluator();
         fitnessInit = false;
     }
 
 
     public double calculateFitness() {
-        if (!fitnessInit) {
-            fitness = new Random().nextDouble() * 1000;
-            fitnessInit = true;
-        } else {
-            return fitness;
+         fitness = fitnessCalculator.calculateFitness(array, permutationArray, tasks);
+         return fitness;
+    }
+
+    public void evaluate() {
+        List<String> runtimeInfo = fitnessCalculator.evaluate(array, permutationArray, tasks);
+        for (String s : runtimeInfo) {
+            System.out.println(s);
         }
-        return fitness;
     }
 
     public int[] getArray() {

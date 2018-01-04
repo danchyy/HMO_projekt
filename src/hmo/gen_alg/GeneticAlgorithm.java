@@ -21,8 +21,8 @@ import java.util.List;
 public class GeneticAlgorithm {
 
     public static final int DEFAULT_POP_SIZE = 100;
-    public static final int DEFAULT_GENERATIONS = 100000;
-    public static final int LOG_EVERY_N = 500;
+    public static final int DEFAULT_GENERATIONS = 500000;
+    public static final int LOG_EVERY_N = 1000;
 
     private PermutationMutation permutationMutation;
     private PermutationCrossing permutationCrossing;
@@ -98,21 +98,21 @@ public class GeneticAlgorithm {
 
             if (i > 0 && i % LOG_EVERY_N == 0) {
                 Collections.sort(population);
-                Collections.reverse(population);
-                for (Unit u : population) {
-                    System.out.print(u.calculateFitness() + " ");
-                }
-                System.out.println();
+                // Collections.reverse(population);
                 double fitness = population.get(0).calculateFitness();
-                System.out.println("Best population fitness: " + fitness);
+                System.out.println("Iteration " + i + ", best population fitness: " + fitness);
+
             }
-
-
         }
+        Collections.sort(population);
+        Unit bestUnit = population.get(0);
+        System.out.println("Iteration " + generations + ", best population fitness: " + bestUnit.calculateFitness());
+        bestUnit.evaluate();
+
     }
 
     public static void main(String[] args) throws IOException, ExecutionControl.NotImplementedException {
-        InputReader reader = new InputReader("tests/ts1.txt");
+        InputReader reader = new InputReader("tests/test2.txt");
         List<Task> tasks = reader.parseInputFile();
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(tasks);
         geneticAlgorithm.run();
