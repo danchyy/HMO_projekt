@@ -8,17 +8,17 @@ public class Task {
 
     private int length;
 
-    private Integer[] availableMachines;
+    private int[] availableMachines;
 
-    private Integer[] availableResources;
+    private int[] requiredResources;
 
     private Random randomGenerator;
 
-    public Task(Integer name, int length, Integer[] availableMachines, Integer[] availableResources) {
+    public Task(Integer name, int length, int[] availableMachines, int[] requiredResources) {
         this.name = name;
         this.length = length;
         this.availableMachines = availableMachines;
-        this.availableResources = availableResources;
+        this.requiredResources = requiredResources;
         this.randomGenerator = new Random();
     }
 
@@ -27,7 +27,7 @@ public class Task {
     }
 
     public int getRandomResource() {
-        return availableResources[randomGenerator.nextInt(this.availableResources.length)];
+        return requiredResources[randomGenerator.nextInt(this.requiredResources.length)];
     }
 
     public int getNumberOfMachines() {
@@ -35,9 +35,16 @@ public class Task {
     }
 
     public int getNumberOfResources() {
-        return availableResources.length;
+        return requiredResources.length;
     }
 
+    public int getLength() {
+        return length;
+    }
+
+    public int[] getRequiredResources() {
+        return requiredResources;
+    }
 
     @Override
     public String toString() {
@@ -52,7 +59,7 @@ public class Task {
         }
         sb.deleteCharAt(sb.length()-1);
         sb.append("], [");
-        for (Integer resource: availableResources) {
+        for (Integer resource: requiredResources) {
             sb.append(resource);
             sb.append(",");
         }

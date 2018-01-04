@@ -33,11 +33,14 @@ public class KTournamentSelection implements Selection {
         Random random = new Random();
         while (tournament.size() != this.k) {
             int index = random.nextInt(population.size());
+            if (indexes.contains(index)) {
+                continue;
+            }
             indexes.add(index);
             tournament.add(population.get(index));
         }
         Collections.sort(tournament);
-        Collections.reverse(tournament);
+        // Collections.reverse(tournament);
         return tournament;
     }
 }

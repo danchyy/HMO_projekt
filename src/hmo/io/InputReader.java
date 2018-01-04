@@ -58,9 +58,12 @@ public class InputReader {
                 String restOfLine = splittedLine[2].trim();
                 String machineString = restOfLine.substring(restOfLine.indexOf('[')+1, restOfLine.indexOf(']')).trim();
                 String[] availableMachinesString = machineString.split(",");
-                Integer[] availableMachines = new Integer[availableMachinesString.length];
+                int[] availableMachines = new int[availableMachinesString.length];
                 if (availableMachinesString[0].isEmpty()) {
-                    availableMachines = allMachines.toArray(new Integer[0]);
+                    availableMachines = new int[allMachines.size()];
+                    for (int i=0; i < allMachines.size(); i++) {
+                        availableMachines[i] = allMachines.get(i);
+                    }
                 } else {
                     for (int i=0; i < availableMachinesString.length; i++) {
                         availableMachines[i] = Integer.parseInt(availableMachinesString[i].substring(2, availableMachinesString[i].length()-1));
@@ -71,10 +74,14 @@ public class InputReader {
                 String resourceString = restOfLine.split("\\[")[2];
                 resourceString = resourceString.substring(0, resourceString.length()-1);
                 String[] availableResourcesString = resourceString.split(",");
-                Integer[] availableResources = new Integer[availableResourcesString.length];
-                if (availableResourcesString[0].isEmpty()) {
-                    availableResources = allResources.toArray(new Integer[0]);
+                int length = -1;
+                if (availableResourcesString[0].trim().isEmpty()) {
+                    length = 0;
                 } else {
+                    length = availableResourcesString.length;
+                }
+                int[] availableResources = new int[length];
+                if (!availableResourcesString[0].trim().isEmpty()) {
                     for (int i=0; i < availableResourcesString.length; i++) {
                         availableResources[i] = Integer.parseInt(availableResourcesString[i].substring(2, availableResourcesString[i].length()-1));
                     }
@@ -86,7 +93,7 @@ public class InputReader {
     }
 
     public static void main(String[] args) throws IOException {
-        InputReader reader = new InputReader("tests/ts1.txt");
+        InputReader reader = new InputReader("tests/test.txt");
         reader.parseInputFile();
     }
 
