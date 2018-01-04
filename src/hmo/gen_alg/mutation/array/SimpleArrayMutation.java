@@ -14,7 +14,7 @@ public class SimpleArrayMutation implements ArrayMutation {
     }
 
     public SimpleArrayMutation() {
-        this.mutationProb = 0.05;
+        this.mutationProb = 0.15;
     }
 
     @Override
