@@ -14,15 +14,19 @@ import hmo.io.InputReader;
 import jdk.jshell.spi.ExecutionControl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class GeneticAlgorithm {
 
-    public static final int DEFAULT_POP_SIZE = 100;
+    public static final int DEFAULT_POP_SIZE = 50;
     public static final int DEFAULT_GENERATIONS = 500000;
-    public static final int LOG_EVERY_N = 1000;
+    public static final int LOG_EVERY_N = 10000;
+
+    public static String DESINATION_PATH = "results/";
+
+    public static int evaluationCounter = 0;
 
     private PermutationMutation permutationMutation;
     private PermutationCrossing permutationCrossing;
@@ -58,6 +62,7 @@ public class GeneticAlgorithm {
     }
 
     private void init() {
+        evaluationCounter = 0;
         population = new ArrayList<>();
         for (int i=0;  i < populationSize; i++) {
             Unit unit = new Unit(tasks);
@@ -66,8 +71,24 @@ public class GeneticAlgorithm {
         }
     }
 
-    public void run() throws ExecutionControl.NotImplementedException {
-        for (int i=0; i < generations; i++) {
+    private void writeOutput(String path, List<String> lines, String time) {
+        String instanceName = path.split("/")[1].split(".txt")[0];
+        // res-vrijeme-instanca.txt“
+        String destination = DESINATION_PATH + instanceName + "/res-" + time + "-" + instanceName + ".txt";
+        try {
+            Files.write(Paths.get(destination), lines);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run(int targetMinutes, String path) throws ExecutionControl.NotImplementedException {
+        long startTime = System.currentTimeMillis();
+        long elapsedTime = 0L;
+        int i=0;
+        boolean oneMinuteReached = false;
+        boolean fiveMinutesReached = false;
+        while (true) {
             // Tournament is sorted
             List<Unit> tournament = selection.selectUnit(population);
 
@@ -96,25 +117,54 @@ public class GeneticAlgorithm {
 
             population.add(childUnit);
 
-            if (i > 0 && i % LOG_EVERY_N == 0) {
+            if (i % LOG_EVERY_N == 0) {
                 Collections.sort(population);
                 // Collections.reverse(population);
                 double fitness = population.get(0).calculateFitness();
                 System.out.println("Iteration " + i + ", best population fitness: " + fitness);
 
             }
+            i++;
+            elapsedTime = (new Date()).getTime() - startTime;
+            if (elapsedTime >= 60 * 1000 && !oneMinuteReached) {
+                Collections.sort(population);
+                Unit topUnit = population.get(0);
+                System.out.println("Results at 1 minute mark, best population fitness: " + topUnit.calculateFitness());
+                System.out.println("Count of evaluations: " + evaluationCounter);
+                oneMinuteReached = true;
+                List<String> units = topUnit.evaluate(false);
+                writeOutput(path, units, "1m");
+
+            }
+            if (elapsedTime >= 5 * 60 * 1000 && !fiveMinutesReached) {
+                Collections.sort(population);
+                Unit topUnit = population.get(0);
+                System.out.println("Results at 5 minute mark, best population fitness: " + topUnit.calculateFitness());
+                System.out.println("Count of evaluations: " + evaluationCounter);
+                fiveMinutesReached = true;
+                topUnit.evaluate(false);
+                List<String> units = topUnit.evaluate(false);
+                writeOutput(path, units, "5m");
+            }
+            if (elapsedTime >= targetMinutes * 60 * 1000) {
+                Collections.sort(population);
+                Unit topUnit = population.get(0);
+                System.out.println("Results at " + targetMinutes + "minute mark , best population fitness: " + topUnit.calculateFitness());
+                System.out.println("Count of evaluations: " + evaluationCounter);
+                topUnit.evaluate(false);
+                List<String> units = topUnit.evaluate(false);
+                writeOutput(path, units, "ne");
+                break;
+            }
         }
-        Collections.sort(population);
-        Unit bestUnit = population.get(0);
-        System.out.println("Iteration " + generations + ", best population fitness: " + bestUnit.calculateFitness());
-        bestUnit.evaluate();
 
     }
 
     public static void main(String[] args) throws IOException, ExecutionControl.NotImplementedException {
-        InputReader reader = new InputReader("tests/test2.txt");
+        String fileName = "tests/ts1.txt";
+        InputReader reader = new InputReader(fileName);
         List<Task> tasks = reader.parseInputFile();
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(tasks);
-        geneticAlgorithm.run();
+        geneticAlgorithm.run(8, fileName);
     }
 }

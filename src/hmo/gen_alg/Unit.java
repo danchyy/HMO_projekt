@@ -68,15 +68,23 @@ public class Unit implements Comparable{
 
 
     public double calculateFitness() {
-         fitness = fitnessCalculator.calculateFitness(array, permutationArray, tasks);
-         return fitness;
+        if (fitnessInit) {
+            return fitness;
+        }
+        fitnessInit = true;
+        fitness = fitnessCalculator.calculateFitness(array, permutationArray, tasks);
+        GeneticAlgorithm.evaluationCounter++;
+        return fitness;
     }
 
-    public void evaluate() {
+    public List<String> evaluate(boolean print) {
         List<String> runtimeInfo = fitnessCalculator.evaluate(array, permutationArray, tasks);
-        for (String s : runtimeInfo) {
-            System.out.println(s);
+        if (print) {
+            for (String s : runtimeInfo) {
+                System.out.println(s);
+            }
         }
+        return runtimeInfo;
     }
 
     public int[] getArray() {

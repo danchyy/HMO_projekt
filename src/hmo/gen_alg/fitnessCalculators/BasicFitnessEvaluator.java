@@ -170,9 +170,9 @@ public class BasicFitnessEvaluator implements FitnessCalculator {
                 for (int j=0; j < requiredResources.length; j++) {
                     resourceString = resourceString + "r" + String.valueOf(requiredResources[j]);
                 }
-                runtimeInfo.add("'t" + (taskIndex+1) + "'," + startOfTask + "," + endOfTask + ",'m" + machineToUse + "'" + ",'" + resourceString + "'");
+                runtimeInfo.add("'t" + (taskIndex+1) + "'," + startOfTask + ",'m" + machineToUse + "'.");
             } else {
-                runtimeInfo.add("'t" + (taskIndex+1) + "'," + startOfTask + "," + endOfTask + ",'m" + machineToUse + "'" + ",-");
+                runtimeInfo.add("'t" + (taskIndex+1) + "'," + startOfTask + ",'m" + machineToUse + "'.");
             }
 
 

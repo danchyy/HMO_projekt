@@ -14,7 +14,7 @@ public class SimplePermutationMutation implements PermutationMutation {
     }
 
     public SimplePermutationMutation() {
-        this.shouldMutate = 0.15;
+        this.shouldMutate = 0.3;
     }
 
     @Override
