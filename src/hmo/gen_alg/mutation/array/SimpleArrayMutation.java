@@ -5,16 +5,15 @@ import hmo.gen_alg.Task;
 import java.util.List;
 import java.util.Random;
 
-public class SimpleArrayMutation implements ArrayMutation {
+public class SimpleArrayMutation extends ArrayMutation {
 
-    private double mutationProb;
 
     public SimpleArrayMutation(double mutationProb) {
         this.mutationProb = mutationProb;
     }
 
     public SimpleArrayMutation() {
-        this.mutationProb = 0.3;
+        this.mutationProb = 0.6;
     }
 
     @Override

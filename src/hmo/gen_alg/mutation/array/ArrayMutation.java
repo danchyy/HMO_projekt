@@ -4,7 +4,9 @@ import hmo.gen_alg.Task;
 
 import java.util.List;
 
-public interface ArrayMutation {
+public abstract class ArrayMutation {
+
+    protected double mutationProb;
 
     /**
      * Mutates the target array
@@ -12,5 +14,10 @@ public interface ArrayMutation {
      * @param tasks List of tasks which will be used for determining to which machine can task index be mutated to
      * @return Mutated array
      */
-    public int[] mutateArray(int[] targetArray, List<Task> tasks);
+    public abstract int[] mutateArray(int[] targetArray, List<Task> tasks);
+
+    public void adjustMutationProb(double modifier) {
+        this.mutationProb *= modifier;
+    }
+
 }
