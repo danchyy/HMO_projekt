@@ -12,7 +12,7 @@ public class KTournamentSelection implements Selection {
     private int k;
 
     public KTournamentSelection() {
-        k = 3;
+        k = 7;
     }
 
     public KTournamentSelection(int k) {
@@ -26,21 +26,24 @@ public class KTournamentSelection implements Selection {
      * @return Sorted tournament
      */
     @Override
-    public List<Unit> selectUnit(List<Unit> population) {
-        List<Unit> tournament = new ArrayList<>();
-        List<Integer> indexes = new ArrayList<>();
+    public Unit selectUnit(List<Unit> population) {
+
+        Unit selected = null;
 
         Random random = new Random();
-        while (tournament.size() != this.k) {
+        int i=0;
+        List<Integer> indexes = new ArrayList<>();
+        while (i < this.k) {
             int index = random.nextInt(population.size());
+            Unit current = population.get(index);
             if (indexes.contains(index)) {
                 continue;
             }
-            indexes.add(index);
-            tournament.add(population.get(index));
+            i++;
+            if ( selected == null || current.calculateFitness() < selected.calculateFitness()) {
+                selected = current;
+            }
         }
-        Collections.sort(tournament);
-        // Collections.reverse(tournament);
-        return tournament;
+        return selected;
     }
 }

@@ -1,8 +1,10 @@
 package hmo.gen_alg;
 
+import hmo.gen_alg.crossing.permutation.OrderCrossover2;
 import hmo.gen_alg.crossing.permutation.PermutationCrossing;
 import hmo.gen_alg.crossing.permutation.PositionBasedCrossing;
 import hmo.gen_alg.crossing.regular.ArrayCrossing;
+import hmo.gen_alg.crossing.regular.OnePointCrossover;
 import hmo.gen_alg.crossing.regular.UniformCrossing;
 import hmo.gen_alg.mutation.array.ArrayMutation;
 import hmo.gen_alg.mutation.array.SimpleArrayMutation;
@@ -22,10 +24,10 @@ import java.util.*;
 public class GeneticAlgorithm {
 
     public static final int DEFAULT_POP_SIZE = 200;
-    public static final int DEFAULT_GENERATIONS = 2000000;
+    public static final int DEFAULT_GENERATIONS = 2000000 + DEFAULT_POP_SIZE;
     public static final int LOG_EVERY_N = 30000;
     public static final int CHANGE_MUTATION = 400000;
-    public static final double MUTATION_FACTOR = 0.8;
+    public static final double MUTATION_FACTOR = 0.9;
 
     public static String DESINATION_PATH = "results/";
 
@@ -48,7 +50,7 @@ public class GeneticAlgorithm {
     private List<Unit> population;
 
     public GeneticAlgorithm(List<Task> tasks) {
-        this(new SimplePermutationMutation(), new PositionBasedCrossing(), new SimpleArrayMutation(), new UniformCrossing(), tasks, new KTournamentSelection(), DEFAULT_POP_SIZE, DEFAULT_GENERATIONS);
+        this(new SimplePermutationMutation(), new OrderCrossover2(), new SimpleArrayMutation(), new OnePointCrossover(), tasks, new KTournamentSelection(), DEFAULT_POP_SIZE, DEFAULT_GENERATIONS);
     }
 
     public GeneticAlgorithm(PermutationMutation permutationMutation, PermutationCrossing permutationCrossing, ArrayMutation arrayMutation, ArrayCrossing arrayCrossing, List<Task> tasks, Selection selection, int populationSize, int generations) {
@@ -72,6 +74,9 @@ public class GeneticAlgorithm {
             unit.calculateFitness();
             population.add(unit);
         }
+        Collections.sort(population);
+        double fitness = population.get(0).calculateFitness();
+        System.out.println("Start state, best population fitness: " + fitness);
     }
 
     private void writeOutput(String path, List<String> lines, String time) {
@@ -88,24 +93,19 @@ public class GeneticAlgorithm {
     public void run(String path) throws ExecutionControl.NotImplementedException {
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0L;
-        int i=0;
         boolean oneMinuteReached = false;
         boolean fiveMinutesReached = false;
         List<String> fitnessEvaluations = new ArrayList<>();
         while (true) {
-            // Tournament is sorted
-            List<Unit> tournament = selection.selectUnit(population);
+            Unit firstUnit = selection.selectUnit(population);
+            Unit secondUnit = selection.selectUnit(population);
 
-            Unit bestUnit = tournament.get(0);
-            Unit secondBestUnit = tournament.get(1);
-
-            Unit worstUnit = tournament.get(tournament.size()-1);
 
             // GETTING THE TASK ARRAY FOR CHILD
-            int[] childArray = arrayCrossing.crossUnit(bestUnit.getArray(), secondBestUnit.getArray());
+            int[] childArray = arrayCrossing.crossUnit(firstUnit.getArray(), secondUnit.getArray());
 
             // GETTING THE PERMUTATION ARRAY FOR CHILD
-            int[] childPermutationArray = permutationCrossing.crossUnit(bestUnit.getPermutationArray(), secondBestUnit.getPermutationArray());
+            int[] childPermutationArray = permutationCrossing.crossUnit(firstUnit.getPermutationArray(), secondUnit.getPermutationArray());
 
             // MUTATING THE ARRAY OF TASKS
             childArray = arrayMutation.mutateArray(childArray, tasks);
@@ -117,20 +117,19 @@ public class GeneticAlgorithm {
             Unit childUnit = new Unit(childArray, childPermutationArray, tasks);
             childUnit.calculateFitness();
 
-            population.remove(worstUnit);
+            Collections.sort(population);
+            population.remove(population.size()-1);
 
             population.add(childUnit);
 
-            if (i % LOG_EVERY_N == 0) {
-                Collections.sort(population);
+            if (evaluationCounter % LOG_EVERY_N == 0) {
                 // Collections.reverse(population);
                 double fitness = population.get(0).calculateFitness();
-                System.out.println("Iteration " + i + ", best population fitness: " + fitness);
+                System.out.println("Iteration " + evaluationCounter + ", best population fitness: " + fitness);
 
             }
-            i++;
 
-            if (i % CHANGE_MUTATION == 0) {
+            if (evaluationCounter % CHANGE_MUTATION == 0) {
                 arrayMutation.adjustMutationProb(MUTATION_FACTOR);
                 permutationMutation.adjustMutationProb(MUTATION_FACTOR);
             }
@@ -158,7 +157,7 @@ public class GeneticAlgorithm {
                 List<String> units = topUnit.evaluate(false);
                 writeOutput(path, units, "5m");
             }
-            if (i == DEFAULT_GENERATIONS) {
+            if (evaluationCounter >= DEFAULT_GENERATIONS) {
                 Collections.sort(population);
                 Unit topUnit = population.get(0);
                 System.out.println("Results at " + DEFAULT_GENERATIONS + ", best population fitness: " + topUnit.calculateFitness());
