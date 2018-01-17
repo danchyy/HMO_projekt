@@ -15,11 +15,11 @@ public class OrderCrossover2 implements PermutationCrossing {
     public int[] crossUnit(int[] firstUnit, int[] secondUnit) throws ExecutionControl.NotImplementedException {
         Random random = new Random();
         int firstBreakPoint = random.nextInt(firstUnit.length);
-        while (firstBreakPoint + 10 >= firstUnit.length) {
+        while (firstBreakPoint >= 4 * firstUnit.length / 5) {
             firstBreakPoint = random.nextInt(firstUnit.length);
         }
         int secondBreakPoint = random.nextInt(secondUnit.length);
-        while (secondBreakPoint < firstBreakPoint + 3) {
+        while (secondBreakPoint <= firstBreakPoint ) {
             secondBreakPoint = random.nextInt(secondUnit.length);
         }
         int[] childArray = new int[firstUnit.length];
