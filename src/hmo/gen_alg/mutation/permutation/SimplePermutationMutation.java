@@ -14,7 +14,7 @@ public class SimplePermutationMutation extends PermutationMutation {
     }
 
     public SimplePermutationMutation() {
-        this.mutationProb = 0.6;
+        this.mutationProb = 0.15;
     }
 
     @Override

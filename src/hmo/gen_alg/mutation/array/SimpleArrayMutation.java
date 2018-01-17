@@ -13,7 +13,7 @@ public class SimpleArrayMutation extends ArrayMutation {
     }
 
     public SimpleArrayMutation() {
-        this.mutationProb = 0.6;
+        this.mutationProb = 0.15;
     }
 
     @Override
